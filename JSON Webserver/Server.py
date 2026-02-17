@@ -26,10 +26,11 @@ async def get_user(req):
     return web.json_response({'error': 'User not found'}, status=404)
 
 async def add_user(req):
-    name = await req.json()
+    data = await req.json()
+    name = data.get("name")
 
-    n = len(users) + 1
-    users.append({'id': n, 'name': name})
+    new_id = max(user["id"] for user in users) + 1
+    users.append({'id': new_id, 'name': name})
 
     return web.json_response({"message": "User created"})
 
@@ -47,9 +48,9 @@ async def delete_user(req):
 
 app.router.add_get('/', index)
 app.router.add_get('/api/users', get_users)
-app.router.add_get('/api/user/{id}', get_user)
+app.router.add_get('/api/users/{id}', get_user)
 app.router.add_post('/api/users', add_user)
-app.router.add_post('/api/users/{id}', delete_user)
+app.router.add_delete('/api/users/{id}', delete_user)
 
 
 if __name__ == "__main__":
